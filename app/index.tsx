@@ -1,55 +1,92 @@
+import { translateApiV2 } from "@/api/translateApi";
+import Header from "@/components/Header";
+import baseStyles from "@/styles/baseStyle";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-const languages = ["English", "Bengali", "French", "German"];
+
 
 const HomeScreen = () => {
-  const [fromLang, setFromLang] = useState("English");
-  const [toLang, setToLang] = useState("Bengali");
+  const [isLoading, setIsLoading] = useState(false)
+  const [fromLang, setFromLang] = useState('en-GB');
+  const [toLang, setToLang] = useState('bn-IN');
   const [inputText, setInputText] = useState("");
-  const [translatedText, setTranslatedText] = useState("");
 
   const swapLanguages = () => {
     setFromLang(toLang);
     setToLang(fromLang);
   };
 
-  const translate = () => {
-    // This is a placeholder. Replace with actual translation logic.
-    setTranslatedText(inputText.split("").reverse().join(""));
+  const handleTranslate = async () => {
+      setIsLoading(true);
+      const data = await translateApiV2(inputText, fromLang, toLang);
+      setInputText(data);
+      setIsLoading(false);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Language Selectors */}
-      <View style={styles.languageRow}>
-        <Text style={styles.language}>{fromLang}</Text>
-        <TouchableOpacity onPress={swapLanguages}>
-          <Ionicons name="swap-horizontal" size={24} color="gray" />
-        </TouchableOpacity>
-        <Text style={styles.language}>{toLang}</Text>
+      <View style={baseStyles.container}>
+          <StatusBar barStyle={'light-content'} backgroundColor={'#121212'} />
+          {/* Header */}
+          <Header />
+          {/* Input Text Box */}
+          <View
+              style={{
+                  flex: 1,
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+              }}
+          >
+              <View>
+                  <TextInput
+                      style={[styles.inputBox, baseStyles.input]}
+                      placeholder="Type to translate..."
+                      multiline
+                      value={inputText}
+                      onChangeText={setInputText}
+                      placeholderTextColor="gray"
+                  />
+
+                  {/* Translate Button */}
+                  <TouchableOpacity
+                      style={baseStyles.button}
+                      onPress={handleTranslate}
+                      disabled={isLoading}
+                  >
+                      <Text
+                          style={[
+                              baseStyles.buttonText,
+                              styles.translateButtonText,
+                          ]}
+                      >
+                          {isLoading ? 'Loading...' : 'Translate'}
+                      </Text>
+                  </TouchableOpacity>
+              </View>
+
+              {/* Language Selectors */}
+              <View style={styles.languageRow}>
+                  <TouchableOpacity style={baseStyles.button}>
+                      <Text style={[baseStyles.buttonText, styles.language]}>
+                          {fromLang}
+                      </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={swapLanguages}>
+                      <Ionicons
+                          name="swap-horizontal"
+                          size={24}
+                          color="#ffffff"
+                      />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={baseStyles.button}>
+                      <Text style={[baseStyles.buttonText, styles.language]}>
+                          {toLang}
+                      </Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
       </View>
-
-      {/* Input Text Box */}
-      <TextInput
-        style={styles.inputBox}
-        placeholder="Type to translate..."
-        multiline
-        value={inputText}
-        onChangeText={setInputText}
-      />
-
-      {/* Translate Button */}
-      <TouchableOpacity style={styles.translateButton} onPress={translate}>
-        <Text style={styles.translateButtonText}>Translate</Text>
-      </TouchableOpacity>
-
-      {/* Output Box */}
-      <View style={styles.outputBox}>
-        <Text style={styles.outputText}>{translatedText || "Translation appears here"}</Text>
-      </View>
-    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -61,23 +98,24 @@ const styles = StyleSheet.create({
   },
   languageRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
-    marginBottom: 20,
+    marginVertical: 30,
   },
   language: {
     fontSize: 18,
     fontWeight: "600",
+    color: "white"
   },
   inputBox: {
     height: 120,
-    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
     padding: 12,
     textAlignVertical: "top",
     fontSize: 16,
     marginBottom: 20,
+
   },
   translateButton: {
     backgroundColor: "#007AFF",
@@ -87,7 +125,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   translateButtonText: {
-    color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
   },
