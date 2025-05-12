@@ -28,6 +28,7 @@ const HomeScreen = () => {
   return (
       <View style={baseStyles.container}>
           <StatusBar barStyle={'light-content'} backgroundColor={'#121212'} />
+         
           {/* Header */}
           <Header />
           {/* Input Text Box */}

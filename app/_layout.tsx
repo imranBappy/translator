@@ -12,13 +12,9 @@ export default function RootLayout() {
               options={{ headerShown: false, title: 'Home' }}
           />
           <Stack.Screen
-              name="history"
+              name="history/index.tsx"
+              options={{ headerShown: false, title: 'history' }}
           />
-        
-          {/* <Stack.Screen
-              name="hello/index.tsx"
-              options={{ headerShown: false, title: 'Hello' }}
-          /> */}
       </Stack>
   );
 }

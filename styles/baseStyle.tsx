@@ -14,7 +14,6 @@ const baseStyles = StyleSheet.create({
         color: '#ffffff',
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 12,
     },
     card: {
         backgroundColor: '#1e1e1e',
